@@ -4,6 +4,10 @@
 # To run the tests for Google Test itself on Linux, use 'make test' or
 # ctest.  You can select which tests to run using 'ctest -R regex'.
 # For more options, run 'ctest --help'.
+#
+# Modified by Einar J.M. Baumann (2018) <einar.baumann@gmail.com>
+# Removed tests and samples, as well as the code used by them.
+# Added install target.
 
 # BUILD_SHARED_LIBS is a standard CMake variable, but we declare it here to
 # make it prominent in the GUI.
@@ -66,4 +70,42 @@ link_directories(${gtest_BINARY_DIR}/src)
 cxx_library(gtest "${cxx_strict}" src/gtest-all.cc)
 cxx_library(gtest_main "${cxx_strict}" src/gtest_main.cc)
 target_link_libraries(gtest_main gtest)
+
+#######################################################################
+# Add install target
+SET(GTEST_INTERFACES
+    include/gtest/gtest-death-test.h
+    include/gtest/gtest.h
+    include/gtest/gtest-message.h
+    include/gtest/gtest-param-test.h
+    include/gtest/gtest-param-test.h.pump
+    include/gtest/gtest_pred_impl.h
+    include/gtest/gtest-printers.h
+    include/gtest/gtest_prod.h
+    include/gtest/gtest-spi.h
+    include/gtest/gtest-test-part.h
+    include/gtest/gtest-typed-test.h
+)
+SET(GTEST_PRIVATE_HEADERS
+    include/gtest/internal/gtest-death-test-internal.h
+    include/gtest/internal/gtest-filepath.h
+    include/gtest/internal/gtest-internal.h
+    include/gtest/internal/gtest-linked_ptr.h
+    include/gtest/internal/gtest-param-util-generated.h
+    include/gtest/internal/gtest-param-util-generated.h.pump
+    include/gtest/internal/gtest-param-util.h
+    include/gtest/internal/gtest-port.h
+    include/gtest/internal/gtest-string.h
+    include/gtest/internal/gtest-tuple.h
+    include/gtest/internal/gtest-tuple.h.pump
+    include/gtest/internal/gtest-type-util.h
+    include/gtest/internal/gtest-type-util.h.pump
+)
+set_target_properties(gtest PROPERTIES PUBLIC_HEADER "${GTEST_INTERFACES}")
+set_target_properties(gtest PROPERTIES PRIVATE_HEADER "${GTEST_PRIVATE_HEADERS}")
+install(TARGETS gtest DESTINATION lib
+        PRIVATE_HEADER DESTINATION include/gtest/internal
+        PUBLIC_HEADER DESTINATION include/gtest)
+install(TARGETS gtest_main DESTINATION lib)
+
 
